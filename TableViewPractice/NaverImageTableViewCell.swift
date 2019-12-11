@@ -66,9 +66,8 @@ class NaverImageTableViewCell: UITableViewCell {
         httpTask?.resume()
     }
     
-    private func downloadImage(from urlString: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> () ) {
+    func downloadImage(from urlString: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> () ) {
         guard let url = URL(string: urlString) else {return}
         getData(from: url, completion: completionHandler)
     }
-
 }

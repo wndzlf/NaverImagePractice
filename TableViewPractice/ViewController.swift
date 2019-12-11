@@ -14,14 +14,12 @@ protocol ImageDicDelegate: AnyObject {
 }
 
 class ViewController: UIViewController {
-
     @IBOutlet weak var tableView: UITableView!
     
     private var items: [Item] = []
     private let cellId = "cellId"
     
     var imageDic: [String: UIImage] = [:]
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -84,6 +82,10 @@ extension ViewController: ImageDicDelegate {
     
     func getImage(link: String) -> UIImage? {
         return imageDic[link]
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 150
     }
     
 }

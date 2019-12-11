@@ -18,7 +18,6 @@
 		84CA96B9239FCE3B00A2BF71 /* NaverImageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84CA96B8239FCE3B00A2BF71 /* NaverImageTableViewCell.xib */; };
 		84CA96BB239FCE5200A2BF71 /* NaverImageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CA96BA239FCE5200A2BF71 /* NaverImageTableViewCell.swift */; };
 		84CA96BD239FD50700A2BF71 /* SecretKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CA96BC239FD50700A2BF71 /* SecretKey.swift */; };
-		CE72AD0023A0CBA600E4004F /* SecretKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE72ACFF23A0CBA600E4004F /* SecretKey.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,7 +34,6 @@
 		84CA96B8239FCE3B00A2BF71 /* NaverImageTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NaverImageTableViewCell.xib; sourceTree = "<group>"; };
 		84CA96BA239FCE5200A2BF71 /* NaverImageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaverImageTableViewCell.swift; sourceTree = "<group>"; };
 		84CA96BC239FD50700A2BF71 /* SecretKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecretKey.swift; sourceTree = "<group>"; };
-		CE72ACFF23A0CBA600E4004F /* SecretKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecretKey.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,7 +78,6 @@
 				84CA96AB239D22CA00A2BF71 /* LaunchScreen.storyboard */,
 				84CA96AE239D22CA00A2BF71 /* Info.plist */,
 				84CA96BC239FD50700A2BF71 /* SecretKey.swift */,
-				CE72ACFF23A0CBA600E4004F /* SecretKey.swift */,
 			);
 			path = TableViewPractice;
 			sourceTree = "<group>";
@@ -158,7 +155,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				84CA96A5239D22C800A2BF71 /* ViewController.swift in Sources */,
-				CE72AD0023A0CBA600E4004F /* SecretKey.swift in Sources */,
 				84CA96A1239D22C800A2BF71 /* AppDelegate.swift in Sources */,
 				84CA96BB239FCE5200A2BF71 /* NaverImageTableViewCell.swift in Sources */,
 				84CA96A3239D22C800A2BF71 /* SceneDelegate.swift in Sources */,
