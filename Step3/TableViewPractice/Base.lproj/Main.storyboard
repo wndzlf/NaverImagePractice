@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15400" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="mAg-M4-2zJ">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15404"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -16,23 +16,15 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="BHm-Vw-6LG">
-                                <rect key="frame" x="0.0" y="144" width="414" height="752"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <rect key="frame" x="0.0" y="44" width="414" height="852"/>
                             </tableView>
-                            <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="yE1-0h-Dz5">
-                                <rect key="frame" x="0.0" y="88" width="414" height="56"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </searchBar>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="BHm-Vw-6LG" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="5Ph-k4-E1e"/>
                             <constraint firstItem="BHm-Vw-6LG" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailing" id="HWI-w2-KDu"/>
-                            <constraint firstItem="yE1-0h-Dz5" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="KdF-43-tWG"/>
-                            <constraint firstItem="yE1-0h-Dz5" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="VRq-5p-Pa9"/>
-                            <constraint firstItem="yE1-0h-Dz5" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="cmP-mF-omE"/>
                             <constraint firstAttribute="bottom" secondItem="BHm-Vw-6LG" secondAttribute="bottom" id="sdU-nO-ZwO"/>
-                            <constraint firstItem="BHm-Vw-6LG" firstAttribute="top" secondItem="yE1-0h-Dz5" secondAttribute="bottom" id="tMY-Mt-3dN"/>
+                            <constraint firstItem="BHm-Vw-6LG" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="zAk-ez-UVF"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
@@ -43,7 +35,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="773.91304347826087" y="-36.160714285714285"/>
+            <point key="canvasLocation" x="625" y="-56"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="3AV-Gf-Enl">
@@ -53,13 +45,10 @@
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
-                    <connections>
-                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="OzG-Z0-aH1"/>
-                    </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nIB-RR-47X" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-201" y="-28"/>
+            <point key="canvasLocation" x="-461" y="-70"/>
         </scene>
     </scenes>
 </document>

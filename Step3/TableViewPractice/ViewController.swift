@@ -18,18 +18,23 @@ class ViewController: UIViewController {
     
     private var items: [Item] = []
     private let cellId = "cellId"
+    private var paging = 1
+    private var searchQuery = "트와이스"
     
     var imageDic: [String: UIImage] = [:]
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupTableView()
-        requestNaverImageResult(query: "트와이스", display: 20, start: 1, sort: "1", filter: "1")
+        requestNaverImageResult(query: searchQuery, display: 10, start: paging, sort: "1", filter: "1")
     }
     
     private func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.prefetchDataSource = self
+    
+        tableView.allowsSelection = false
         
         let naverImageTableViewCellNIB = UINib(nibName: "NaverImageTableViewCell", bundle: nil)
         tableView.register(naverImageTableViewCellNIB, forCellReuseIdentifier: cellId)
@@ -46,7 +51,7 @@ class ViewController: UIViewController {
             }
             switch result {
             case .success(let naverImageResult):
-                self.items = naverImageResult.items
+                self.items.append(contentsOf: naverImageResult.items)
                 self.tableView.reloadData()
             case .failure(.JsonParksingError):
                 break
@@ -73,6 +78,29 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let searchBar = UISearchBar()
+        searchBar.barStyle = .default
+        
+        searchBar.backgroundColor = .lightGray
+        searchBar.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 50)
+         
+        return searchBar
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 50
+    }
+    
+}
+
+extension ViewController: UITableViewDataSourcePrefetching {
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        if indexPaths.count == 1, let row = indexPaths.last?.row, row >= items.count - 5 {
+            paging += 1
+            self.requestNaverImageResult(query: searchQuery, display: 10, start: paging, sort: "1", filter: "1")
+        }
+    }
 }
 
 extension ViewController: ImageDicDelegate {
@@ -82,10 +110,6 @@ extension ViewController: ImageDicDelegate {
     
     func getImage(link: String) -> UIImage? {
         return imageDic[link]
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 150
     }
     
 }
