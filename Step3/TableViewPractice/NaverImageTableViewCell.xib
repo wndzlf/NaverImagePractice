@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>c
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="NaverImageTableViewCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellId" rowHeight="171" id="cx7-WA-Rz3" customClass="NaverImageTableViewCell" customModule="TableViewPractice" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="579" height="171"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="cx7-WA-Rz3" id="70u-wc-7A4">
+                <rect key="frame" x="0.0" y="0.0" width="579" height="171"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="DkB-HU-6fO">
+                        <rect key="frame" x="20" y="8" width="120" height="155"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="120" id="IYp-5e-VOb"/>
+                            <constraint firstAttribute="height" priority="999" constant="120" id="zPG-a1-Oyc"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g0e-oS-03W">
+                        <rect key="frame" x="160" y="8" width="399" height="18"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="DkB-HU-6fO" firstAttribute="leading" secondItem="70u-wc-7A4" secondAttribute="leading" constant="20" id="2VT-Rd-ae0"/>
+                    <constraint firstItem="g0e-oS-03W" firstAttribute="leading" secondItem="DkB-HU-6fO" secondAttribute="trailing" constant="20" id="ChS-Oa-ur5"/>
+                    <constraint firstAttribute="trailing" secondItem="g0e-oS-03W" secondAttribute="trailing" constant="20" id="HXd-3K-CgQ"/>
+                    <constraint firstItem="DkB-HU-6fO" firstAttribute="top" secondItem="70u-wc-7A4" secondAttribute="top" constant="8" id="LnY-di-wTF"/>
+                    <constraint firstItem="g0e-oS-03W" firstAttribute="top" secondItem="DkB-HU-6fO" secondAttribute="top" id="RHb-OQ-htp"/>
+                    <constraint firstAttribute="bottom" secondItem="DkB-HU-6fO" secondAttribute="bottom" constant="8" id="djs-rF-bzi"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="naverImage" destination="DkB-HU-6fO" id="EN8-S5-4f8"/>
+                <outlet property="titleLabel" destination="g0e-oS-03W" id="TiP-0t-Y2a"/>
+            </connections>
+            <point key="canvasLocation" x="254.34782608695653" y="778.45982142857144"/>
+        </tableViewCell>
+    </objects>
+</document>
