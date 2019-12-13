@@ -23,6 +23,8 @@ class ViewController: UIViewController {
     private var storeBeforSearchText = ""
     private let numberOfImageDisplay = 10
     
+    private var isRequest = false
+    
     private var naverImageCache = NSCache<NSString, UIImage>()
     
     private lazy var searchBar: UISearchBar = {
@@ -40,6 +42,7 @@ class ViewController: UIViewController {
     private lazy var footerActivityIndicator: UIActivityIndicatorView = {
         let acitivityView = UIActivityIndicatorView(style: .medium)
         acitivityView.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: footerHeight)
+        acitivityView.startAnimating()
         return acitivityView
     }()
     
@@ -200,19 +203,32 @@ extension ViewController: UITableViewDataSourcePrefetching {
         print("prefetch \(indexPaths)")
         
 //        guard paging < 3 else { return }
+        guard isRequest == false else {
+            if indexPaths.count >= 2 {
+                NaverImageAPI.dataTask?.cancel()
+                paging -= 1
+                isRequest = false
+            }
+            return
+        }
         if indexPaths.count == 1, let row = indexPaths.last?.row, row >= items.count - 4 {
             paging += 1
             
             tableView.tableFooterView = footerActivityIndicator
             tableView.sectionFooterHeight = footerHeight
-            footerActivityIndicator.startAnimating()
             
+            isRequest = true
+            // 네트워크 인디케이터가 start되고(마지막에 내린후) 다시 올렸을 경우는 어떻게 할 것인가?
+            // httpTask를 cancled 시켜 버리고 tableView.footerView를 nil값으로 바꾸는 작업이 필요
+            // 몇가지 방법을 생각! 첫번째는 prefetcnRows의 last값을 잠시 저장후 그거보다 작은 값이 출력되면
+            // httpTask를 cancle 시킨다. 지금현재 네트워크 요청한 상태인지 아닌지 파악이 필용함.
             self.requestNaverImageResult(query: searchQuery, display: numberOfImageDisplay, start: paging, sort: "1", filter: "1") { [weak self] in
                 
-                // nil값을 주는게 중요햇네!
                 self?.tableView.tableFooterView = nil
                 self?.tableView.sectionFooterHeight = 0
+                
                 self?.tableView.reloadData()
+                self?.isRequest = false
             }
         }
     }
