@@ -18,6 +18,7 @@
 		84CA96B9239FCE3B00A2BF71 /* NaverImageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84CA96B8239FCE3B00A2BF71 /* NaverImageTableViewCell.xib */; };
 		84CA96BB239FCE5200A2BF71 /* NaverImageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CA96BA239FCE5200A2BF71 /* NaverImageTableViewCell.swift */; };
 		84CA96BD239FD50700A2BF71 /* SecretKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CA96BC239FD50700A2BF71 /* SecretKey.swift */; };
+		CE72804923A3381B00B0FDBA /* Array+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE72804823A3381B00B0FDBA /* Array+extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		84CA96B8239FCE3B00A2BF71 /* NaverImageTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NaverImageTableViewCell.xib; sourceTree = "<group>"; };
 		84CA96BA239FCE5200A2BF71 /* NaverImageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaverImageTableViewCell.swift; sourceTree = "<group>"; };
 		84CA96BC239FD50700A2BF71 /* SecretKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecretKey.swift; sourceTree = "<group>"; };
+		CE72804823A3381B00B0FDBA /* Array+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+extension.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +70,7 @@
 			children = (
 				84CA96A0239D22C800A2BF71 /* AppDelegate.swift */,
 				84CA96A2239D22C800A2BF71 /* SceneDelegate.swift */,
+				CE72804823A3381B00B0FDBA /* Array+extension.swift */,
 				84CA96A4239D22C800A2BF71 /* ViewController.swift */,
 				84CA96B8239FCE3B00A2BF71 /* NaverImageTableViewCell.xib */,
 				84CA96BA239FCE5200A2BF71 /* NaverImageTableViewCell.swift */,
@@ -117,7 +120,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 84CA9698239D22C800A2BF71 /* Build configuration list for PBXProject "TableViewPractice" */;
+			buildConfigurationList = 84CA9698239D22C800A2BF71 /* Build configuration list for PBXProject "TableViewPractice3" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -161,6 +164,7 @@
 				84CA96BD239FD50700A2BF71 /* SecretKey.swift in Sources */,
 				84CA96B5239D276D00A2BF71 /* NaverImageAPI.swift in Sources */,
 				84CA96B7239FC81300A2BF71 /* NaverImageResult.swift in Sources */,
+				CE72804923A3381B00B0FDBA /* Array+extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,7 +345,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		84CA9698239D22C800A2BF71 /* Build configuration list for PBXProject "TableViewPractice" */ = {
+		84CA9698239D22C800A2BF71 /* Build configuration list for PBXProject "TableViewPractice3" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				84CA96AF239D22CA00A2BF71 /* Debug */,

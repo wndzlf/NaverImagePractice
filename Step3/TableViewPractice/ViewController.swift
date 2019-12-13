@@ -8,9 +8,9 @@
 
 import UIKit
 
-protocol ImageDicDelegate: AnyObject {
-    func updateImageDictioinary(link: String, value: UIImage)
-    func getImage(link:String) -> UIImage?
+protocol imageCachingDelegate: AnyObject {
+    func updateCache(link: String, value: UIImage)
+    func image(link: String) -> UIImage?
 }
 
 class ViewController: UIViewController {
@@ -19,14 +19,28 @@ class ViewController: UIViewController {
     private var items: [Item] = []
     private let cellId = "cellId"
     private var paging = 1
-    private var searchQuery = "트와이스"
+    private var searchQuery = ""
+    private var storeBeforSearchText = ""
+    private let numberOfImageDisplay = 10
+    
+    private lazy var searchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        searchBar.barStyle = .default
+        searchBar.backgroundColor = .lightGray
+        searchBar.delegate = self
+        searchBar.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 50)
+        return searchBar
+    }()
     
     var imageDic: [String: UIImage] = [:]
+    private var naverImageCache = NSCache<NSString, UIImage>()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        naverImageCache.countLimit = 5 
         setupTableView()
-        requestNaverImageResult(query: searchQuery, display: 10, start: paging, sort: "1", filter: "1")
+        requestNaverImageResult(query: searchQuery, display: numberOfImageDisplay, start: paging, sort: "1", filter: "1")
     }
     
     private func setupTableView() {
@@ -42,6 +56,20 @@ class ViewController: UIViewController {
         
         tableView.estimatedRowHeight = 150
         tableView.rowHeight = UITableView.automaticDimension
+        
+        tableView.refreshControl = UIRefreshControl()
+        tableView.refreshControl?.addTarget(self, action: #selector(handleRefreshControl), for: .valueChanged)
+    }
+    
+    @objc private func handleRefreshControl() {
+        items.removeAll()
+        if let searchBarText = searchBar.text {
+            paging = 1
+            requestNaverImageResult(query: searchBarText, display: numberOfImageDisplay, start: paging, sort: "1", filter: "2")
+            DispatchQueue.main.async {
+                self.tableView.refreshControl?.endRefreshing()
+            }
+        }
     }
     
     private func requestNaverImageResult(query: String, display: Int, start: Int, sort: String, filter: String) {
@@ -61,6 +89,26 @@ class ViewController: UIViewController {
     
 }
 
+extension ViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        print(searchText)
+    }
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        print("didEndEditing")
+    }
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        if let searchText = searchBar.text, searchQuery != searchText {
+            items.removeAll()
+            searchQuery = searchText
+            requestNaverImageResult(query: searchText, display: numberOfImageDisplay, start: paging, sort: "1", filter: "2")
+        }
+        searchBar.resignFirstResponder()
+        print("searchBarSearchButtonClicked")
+    }
+    
+
+}
+
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
@@ -71,20 +119,16 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             return .init()
         }
         cell.imageDicDelegate = self
-        cell.titleLabel.text = items[indexPath.row].title
-        cell.imageURLString = items[indexPath.row].link
+        guard let titleLabel = items[safeIndex: indexPath.row]?.title , let imageURLString = items[safeIndex: indexPath.row]?.link else {
+            return .init()
+        }
+        cell.titleLabel.text = titleLabel
+        cell.imageURLString = imageURLString
         cell.indexPathRow = indexPath.row
-    
         return cell
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let searchBar = UISearchBar()
-        searchBar.barStyle = .default
-        
-        searchBar.backgroundColor = .lightGray
-        searchBar.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 50)
-         
         return searchBar
     }
     
@@ -98,19 +142,18 @@ extension ViewController: UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         if indexPaths.count == 1, let row = indexPaths.last?.row, row >= items.count - 5 {
             paging += 1
-            self.requestNaverImageResult(query: searchQuery, display: 10, start: paging, sort: "1", filter: "1")
+            self.requestNaverImageResult(query: searchQuery, display: numberOfImageDisplay, start: paging, sort: "1", filter: "1")
         }
     }
 }
 
-extension ViewController: ImageDicDelegate {
-    func updateImageDictioinary(link: String, value: UIImage) {
-        imageDic.updateValue(value, forKey: link)
+extension ViewController: imageCachingDelegate {
+    func updateCache(link: String, value: UIImage) {
+        naverImageCache.setObject(value, forKey: link as NSString)
     }
     
-    func getImage(link: String) -> UIImage? {
-        return imageDic[link]
+    func image(link: String) -> UIImage? {
+        return naverImageCache.object(forKey: link as NSString)
     }
     
 }
-

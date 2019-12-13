@@ -17,14 +17,14 @@ class NaverImageTableViewCell: UITableViewCell {
     var httpTask: URLSessionDataTask?
     var indexPathRow: Int = 0
     
-    weak var imageDicDelegate: ImageDicDelegate?
+    weak var imageDicDelegate: imageCachingDelegate?
     
     var imageURLString: String? {
         didSet {
             guard let imageURLString = imageURLString else {
                 return
             }
-            if let naverImage = self.imageDicDelegate?.getImage(link: imageURLString) {
+            if let naverImage = self.imageDicDelegate?.image(link: imageURLString) {
                 self.naverImage.image = naverImage
                 return
             }
@@ -37,9 +37,9 @@ class NaverImageTableViewCell: UITableViewCell {
                 }
                 let ratio = self.setImageHeight(image.size)
                 DispatchQueue.main.async {
-                    self.naverImageHeightConstraint.constant = self.naverImageHeightConstraint.constant * ratio
+                    self.naverImageHeightConstraint.constant = 150 * ratio
                     self.naverImage.image = image
-                    self.imageDicDelegate?.updateImageDictioinary(link: imageURLString, value: image)
+                    self.imageDicDelegate?.updateCache(link: imageURLString, value: image)
                 }
             }
         }
