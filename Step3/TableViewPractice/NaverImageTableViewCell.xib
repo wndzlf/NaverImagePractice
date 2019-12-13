@@ -2,29 +2,24 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="NaverImageTableViewCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellId" rowHeight="171" id="cx7-WA-Rz3" customClass="NaverImageTableViewCell" customModule="TableViewPractice" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="579" height="171"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="NaverImageTableViewCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellId" rowHeight="259" id="cx7-WA-Rz3" customClass="NaverImageTableViewCell" customModule="TableViewPractice" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="579" height="259"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="cx7-WA-Rz3" id="70u-wc-7A4">
-                <rect key="frame" x="0.0" y="0.0" width="579" height="171"/>
+                <rect key="frame" x="0.0" y="0.0" width="579" height="259"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="DkB-HU-6fO">
-                        <rect key="frame" x="4" y="4" width="150" height="163"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="150" id="IYp-5e-VOb"/>
-                            <constraint firstAttribute="height" priority="750" constant="120" id="zPG-a1-Oyc"/>
-                        </constraints>
+                        <rect key="frame" x="4" y="30" width="571" height="225"/>
                     </imageView>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g0e-oS-03W">
-                        <rect key="frame" x="174" y="4" width="385" height="0.0"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g0e-oS-03W">
+                        <rect key="frame" x="4" y="8" width="571" height="18"/>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
@@ -32,19 +27,21 @@
                 </subviews>
                 <constraints>
                     <constraint firstItem="DkB-HU-6fO" firstAttribute="leading" secondItem="70u-wc-7A4" secondAttribute="leading" constant="4" id="2VT-Rd-ae0"/>
-                    <constraint firstItem="g0e-oS-03W" firstAttribute="leading" secondItem="DkB-HU-6fO" secondAttribute="trailing" constant="20" id="ChS-Oa-ur5"/>
-                    <constraint firstAttribute="trailing" secondItem="g0e-oS-03W" secondAttribute="trailing" constant="20" id="HXd-3K-CgQ"/>
-                    <constraint firstItem="DkB-HU-6fO" firstAttribute="top" secondItem="70u-wc-7A4" secondAttribute="top" constant="4" id="LnY-di-wTF"/>
-                    <constraint firstItem="g0e-oS-03W" firstAttribute="top" secondItem="DkB-HU-6fO" secondAttribute="top" id="RHb-OQ-htp"/>
+                    <constraint firstItem="g0e-oS-03W" firstAttribute="leading" secondItem="70u-wc-7A4" secondAttribute="leading" constant="4" id="4Wc-4M-Sog"/>
+                    <constraint firstItem="g0e-oS-03W" firstAttribute="centerX" secondItem="70u-wc-7A4" secondAttribute="centerX" id="5mP-YH-VcF"/>
+                    <constraint firstItem="DkB-HU-6fO" firstAttribute="top" secondItem="70u-wc-7A4" secondAttribute="top" constant="30" id="LnY-di-wTF"/>
+                    <constraint firstAttribute="trailing" secondItem="DkB-HU-6fO" secondAttribute="trailing" constant="4" id="O1t-go-EAv"/>
+                    <constraint firstAttribute="trailing" secondItem="g0e-oS-03W" secondAttribute="trailing" constant="4" id="RG8-GL-xlk"/>
+                    <constraint firstItem="g0e-oS-03W" firstAttribute="top" secondItem="70u-wc-7A4" secondAttribute="top" constant="8" id="ZDj-CG-My9"/>
                     <constraint firstAttribute="bottom" secondItem="DkB-HU-6fO" secondAttribute="bottom" constant="4" id="djs-rF-bzi"/>
+                    <constraint firstItem="DkB-HU-6fO" firstAttribute="top" secondItem="g0e-oS-03W" secondAttribute="bottom" constant="4" id="mMX-GV-Egr"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
                 <outlet property="naverImage" destination="DkB-HU-6fO" id="EN8-S5-4f8"/>
-                <outlet property="naverImageHeightConstraint" destination="zPG-a1-Oyc" id="4fG-dl-tHS"/>
                 <outlet property="titleLabel" destination="g0e-oS-03W" id="TiP-0t-Y2a"/>
             </connections>
-            <point key="canvasLocation" x="254.34782608695653" y="778.45982142857144"/>
+            <point key="canvasLocation" x="254.34782608695653" y="807.92410714285711"/>
         </tableViewCell>
     </objects>
 </document>

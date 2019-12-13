@@ -35,9 +35,7 @@ class NaverImageTableViewCell: UITableViewCell {
                 guard let data = data, let image = UIImage(data: data) else {
                     return
                 }
-                let ratio = self.setImageHeight(image.size)
                 DispatchQueue.main.async {
-                    self.naverImageHeightConstraint.constant = 150 * ratio
                     self.naverImage.image = image
                     self.imageDicDelegate?.updateCache(link: imageURLString, value: image)
                 }
