@@ -248,6 +248,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         }
         viewController.items = items
         viewController.naverImageCache = naverImageCache
+        viewController.indexPath = indexPath
         //viewController.modalPresentationStyle = .fullScreen
         
         self.present(viewController, animated: true, completion: nil)

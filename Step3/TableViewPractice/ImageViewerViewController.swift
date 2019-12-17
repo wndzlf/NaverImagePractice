@@ -14,6 +14,8 @@ class ImageViewerViewController: UIViewController {
     
     var items: [Item] = []
     var naverImageCache = NSCache<NSString, UIImage>()
+    var indexPath: IndexPath?
+    var isUserScrollNow: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,7 +24,17 @@ class ImageViewerViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = .black
+        collectionView.allowsSelection = true
     }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        if let indexPath = indexPath, isUserScrollNow == false {
+            collectionView.scrollToItem(at: IndexPath(item: indexPath.item, section: 0), at: .centeredHorizontally, animated: false)
+        }
+    }
+    
 }
 
 extension ImageViewerViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -49,6 +61,15 @@ extension ImageViewerViewController: imageCachingDelegate {
     
     func image(link: String) -> UIImage? {
         return naverImageCache.object(forKey: link as NSString)
+    }
+}
+
+extension ImageViewerViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        isUserScrollNow = true
+    }
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        isUserScrollNow = false
     }
 }
 
