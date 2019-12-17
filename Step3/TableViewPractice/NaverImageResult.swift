@@ -6,7 +6,7 @@
 //  Copyright © 2019 wndzlf. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 // MARK: - NaverImagResult
 struct NaverImagResult: Codable {
@@ -16,9 +16,19 @@ struct NaverImagResult: Codable {
 }
 
 // MARK: - Item
-struct Item: Codable {
+struct Item: Codable, Equatable {
     let title: String
     let link: String
     let thumbnail: String
     let sizeheight, sizewidth: String
+    
+    var estimatedHeight: CGFloat?
+    
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        if lhs.title == rhs.title {
+            return true
+        } else {
+            return false
+        }
+    }
 }

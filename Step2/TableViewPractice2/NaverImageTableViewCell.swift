@@ -69,7 +69,6 @@ class NaverImageTableViewCell: UITableViewCell {
         naverImage.image = nil
         titleLabel.text = nil
         
-        print("prepareForReuse: indexPathRow\(indexPathRow)")
         httpTask?.cancel()
     }
     

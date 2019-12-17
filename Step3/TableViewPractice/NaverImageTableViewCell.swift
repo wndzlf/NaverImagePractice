@@ -12,10 +12,13 @@ class NaverImageTableViewCell: UITableViewCell {
     
     @IBOutlet weak var naverImage: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var naverImageHeightConstraint: NSLayoutConstraint!
     
     var httpTask: URLSessionDataTask?
-    var indexPathRow: Int = 0
+    var indexPathRow: Int = 0 {
+        didSet {
+            
+        }
+    }
     
     weak var imageDicDelegate: imageCachingDelegate?
     
@@ -43,20 +46,10 @@ class NaverImageTableViewCell: UITableViewCell {
         }
     }
     
-    private func setImageHeight(_ imageSize: CGSize) -> CGFloat  {
-        var ratio = imageSize.height / imageSize.width
-        if ratio > 1.1 {
-            ratio = 1.1
-        } else if ratio < 0.9 {
-            ratio = 0.9
-        }
-        return ratio
-    }
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        self.naverImage.image = nil
+        //self.naverImage.image = nil
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

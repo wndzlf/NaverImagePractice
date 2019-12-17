@@ -22,6 +22,7 @@ class ViewController: UIViewController {
     private var searchQuery = ""
     private var storeBeforSearchText = ""
     private let numberOfImageDisplay = 10
+    private var cellHeight: NSMutableDictionary = [:]
     
     private var isRequest = false
     
@@ -30,10 +31,17 @@ class ViewController: UIViewController {
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.barStyle = .default
-        searchBar.backgroundColor = .lightGray
         searchBar.delegate = self
         searchBar.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 50)
         return searchBar
+    }()
+    
+    private lazy var noDataLabel: UILabel = {
+        let noDataLabel = UILabel()
+        noDataLabel.text = "데이터가 없습니다."
+        noDataLabel.textAlignment = .center
+        noDataLabel.translatesAutoresizingMaskIntoConstraints = false
+        return noDataLabel
     }()
     
     private let footerHeight: CGFloat = 70
@@ -63,7 +71,8 @@ class ViewController: UIViewController {
         setupTableView()
         setupTableViewActivitiyView()
         
-        requestNaverImageResult(query: searchQuery, display: numberOfImageDisplay, start: paging, sort: "1", filter: "1") { [weak self] in
+        requestNaverImageResult(query: searchQuery, display: numberOfImageDisplay, start: paging, sort: "1", filter: "1") { [weak self] items in
+            self?.items.append(contentsOf: items)
             self?.tableView.reloadData()
         }
     }
@@ -81,8 +90,6 @@ class ViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.prefetchDataSource = self
-    
-        tableView.allowsSelection = false
         
         let naverImageTableViewCellNIB = UINib(nibName: "NaverImageTableViewCell", bundle: nil)
         tableView.register(naverImageTableViewCellNIB, forCellReuseIdentifier: cellId)
@@ -96,25 +103,31 @@ class ViewController: UIViewController {
         items.removeAll()
         if let searchBarText = searchBar.text {
             paging = 1
-            requestNaverImageResult(query: searchBarText, display: numberOfImageDisplay, start: paging, sort: "1", filter: "2") { [weak self] in
-                self?.tableView.reloadData()
+            defer {
+                DispatchQueue.main.async {
+                    self.tableView.refreshControl?.endRefreshing()
+                }
             }
-            DispatchQueue.main.async {
-                self.tableView.refreshControl?.endRefreshing()
+            requestNaverImageResult(query: searchBarText, display: numberOfImageDisplay, start: paging, sort: "1", filter: "2") { [weak self] items in
+                self?.items.append(contentsOf: items)
+                self?.tableView.reloadData()
             }
         }
     }
     
-    private func requestNaverImageResult(query: String, display: Int, start: Int, sort: String, filter: String, completion: @escaping () -> Void) {
+    private func requestNaverImageResult(query: String, display: Int, start: Int, sort: String, filter: String, completion: @escaping ([Item]) -> Void) {
         NaverImageAPI.request(query: query, display: display, start: start, sort: sort, filter: filter) { [weak self] result in
             guard let self = self else {
                 return
             }
             switch result {
             case .success(let naverImageResult):
-                self.items.append(contentsOf: naverImageResult.items)
-                completion()
+                completion(naverImageResult.items)
             case .failure(.JsonParksingError):
+                DispatchQueue.main.async {
+                    self.tableView.tableFooterView = nil
+                    self.tableView.sectionFooterHeight = 0
+                }
                 break
             }
         }
@@ -137,12 +150,28 @@ extension ViewController: UISearchBarDelegate {
             searchQuery = searchText
             
             self.tableActivityIndicatorView.startAnimating()
-            requestNaverImageResult(query: searchText, display: numberOfImageDisplay, start: paging, sort: "1", filter: "2") { [weak self] in
+            requestNaverImageResult(query: searchText, display: numberOfImageDisplay, start: paging, sort: "1", filter: "2") { [weak self] items in
+                self?.items.append(contentsOf: items)
+                self?.handleNoData(itemsCount: items.count)
                 self?.tableActivityIndicatorView.stopAnimating()
                 self?.tableView.reloadData()
             }
         }
+        naverImageCache.removeAllObjects()
         searchBar.resignFirstResponder()
+    }
+    
+    private func handleNoData(itemsCount: Int) {
+        guard itemsCount == 0 else {
+            noDataLabel.removeFromSuperview()
+            return
+        }
+        
+        tableView.addSubview(noDataLabel)
+        noDataLabel.leadingAnchor.constraint(equalTo: self.tableView.leadingAnchor).isActive = true
+        noDataLabel.topAnchor.constraint(equalTo: self.tableView.topAnchor).isActive = true
+        noDataLabel.widthAnchor.constraint(equalTo: self.tableView.widthAnchor).isActive = true
+        noDataLabel.heightAnchor.constraint(equalTo: self.tableView.heightAnchor).isActive = true
     }
 }
 
@@ -194,43 +223,63 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 50
     }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row < items.count {
+            items[indexPath.row].estimatedHeight = cell.frame.size.height
+        }
+    }
+
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        guard indexPath.row < items.count else {
+            return UITableView.automaticDimension
+        }
+        if let height = items[indexPath.row].estimatedHeight {
+            return height
+        }
+        return UITableView.automaticDimension
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let storyboard = UIStoryboard(name: "ImageViewer", bundle: nil)
+        guard let viewController = storyboard.instantiateViewController(identifier: "ImageViewerViewController") as? ImageViewerViewController else {
+            return
+        }
+        viewController.items = items
+        viewController.naverImageCache = naverImageCache
+        //viewController.modalPresentationStyle = .fullScreen
+        
+        self.present(viewController, animated: true, completion: nil)
+    }
 
 }
 
 // MARK: - TableViewDataSourcePrefetching
 extension ViewController: UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        print("prefetch \(indexPaths)")
         
-//        guard paging < 3 else { return }
-        guard isRequest == false else {
-            if indexPaths.count >= 2 {
-                NaverImageAPI.dataTask?.cancel()
-                paging -= 1
-                isRequest = false
-            }
-            return
-        }
-        if indexPaths.count == 1, let row = indexPaths.last?.row, row >= items.count - 4 {
+        if let row = indexPaths.last?.row, row >= items.count - 4 {
             paging += 1
             
             tableView.tableFooterView = footerActivityIndicator
             tableView.sectionFooterHeight = footerHeight
             
             isRequest = true
-            // 네트워크 인디케이터가 start되고(마지막에 내린후) 다시 올렸을 경우는 어떻게 할 것인가?
-            // httpTask를 cancled 시켜 버리고 tableView.footerView를 nil값으로 바꾸는 작업이 필요
-            // 몇가지 방법을 생각! 첫번째는 prefetcnRows의 last값을 잠시 저장후 그거보다 작은 값이 출력되면
-            // httpTask를 cancle 시킨다. 지금현재 네트워크 요청한 상태인지 아닌지 파악이 필용함.
-            self.requestNaverImageResult(query: searchQuery, display: numberOfImageDisplay, start: paging, sort: "1", filter: "1") { [weak self] in
+            self.requestNaverImageResult(query: searchQuery, display: numberOfImageDisplay, start: paging, sort: "1", filter: "1") { [weak self] items in
+                self?.items.appendWithoutDuplicate(array: items)
+                self?.tableView.reloadData()
                 
                 self?.tableView.tableFooterView = nil
                 self?.tableView.sectionFooterHeight = 0
-                
-                self?.tableView.reloadData()
-                self?.isRequest = false
             }
         }
+    }
+    
+    func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId) as? NaverImageTableViewCell else {
+            return
+        }
+        cell.httpTask?.cancel()
     }
 }
 
@@ -247,6 +296,8 @@ extension ViewController: imageCachingDelegate {
 
 extension ViewController: NSCacheDelegate {
     private func cache(_ cache: NSCache<NSString, UIImage>, willEvictObject obj: Any) {
-        print("evictObject \(obj)")
+        
     }
 }
+
+

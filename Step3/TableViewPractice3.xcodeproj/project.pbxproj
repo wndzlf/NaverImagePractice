@@ -18,6 +18,10 @@
 		84CA96B9239FCE3B00A2BF71 /* NaverImageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84CA96B8239FCE3B00A2BF71 /* NaverImageTableViewCell.xib */; };
 		84CA96BB239FCE5200A2BF71 /* NaverImageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CA96BA239FCE5200A2BF71 /* NaverImageTableViewCell.swift */; };
 		84CA96BD239FD50700A2BF71 /* SecretKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CA96BC239FD50700A2BF71 /* SecretKey.swift */; };
+		CE0173B023A8B26700AF9085 /* PhotoViewerLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0173AF23A8B26700AF9085 /* PhotoViewerLayout.swift */; };
+		CE04EDC023A87B4C001BDE12 /* ImageViewer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CE04EDBF23A87B4C001BDE12 /* ImageViewer.storyboard */; };
+		CE04EDC223A87C1E001BDE12 /* ImageViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE04EDC123A87C1E001BDE12 /* ImageViewerViewController.swift */; };
+		CE04EDC423A87C4B001BDE12 /* ImageViewerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE04EDC323A87C4B001BDE12 /* ImageViewerCollectionViewCell.swift */; };
 		CE72804923A3381B00B0FDBA /* Array+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE72804823A3381B00B0FDBA /* Array+extension.swift */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +39,10 @@
 		84CA96B8239FCE3B00A2BF71 /* NaverImageTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NaverImageTableViewCell.xib; sourceTree = "<group>"; };
 		84CA96BA239FCE5200A2BF71 /* NaverImageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaverImageTableViewCell.swift; sourceTree = "<group>"; };
 		84CA96BC239FD50700A2BF71 /* SecretKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecretKey.swift; sourceTree = "<group>"; };
+		CE0173AF23A8B26700AF9085 /* PhotoViewerLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViewerLayout.swift; sourceTree = "<group>"; };
+		CE04EDBF23A87B4C001BDE12 /* ImageViewer.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ImageViewer.storyboard; sourceTree = "<group>"; };
+		CE04EDC123A87C1E001BDE12 /* ImageViewerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewerViewController.swift; sourceTree = "<group>"; };
+		CE04EDC323A87C4B001BDE12 /* ImageViewerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewerCollectionViewCell.swift; sourceTree = "<group>"; };
 		CE72804823A3381B00B0FDBA /* Array+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+extension.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -81,6 +89,10 @@
 				84CA96AB239D22CA00A2BF71 /* LaunchScreen.storyboard */,
 				84CA96AE239D22CA00A2BF71 /* Info.plist */,
 				84CA96BC239FD50700A2BF71 /* SecretKey.swift */,
+				CE04EDBF23A87B4C001BDE12 /* ImageViewer.storyboard */,
+				CE04EDC323A87C4B001BDE12 /* ImageViewerCollectionViewCell.swift */,
+				CE04EDC123A87C1E001BDE12 /* ImageViewerViewController.swift */,
+				CE0173AF23A8B26700AF9085 /* PhotoViewerLayout.swift */,
 			);
 			path = TableViewPractice;
 			sourceTree = "<group>";
@@ -144,6 +156,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84CA96AD239D22CA00A2BF71 /* LaunchScreen.storyboard in Resources */,
+				CE04EDC023A87B4C001BDE12 /* ImageViewer.storyboard in Resources */,
 				84CA96AA239D22CA00A2BF71 /* Assets.xcassets in Resources */,
 				84CA96B9239FCE3B00A2BF71 /* NaverImageTableViewCell.xib in Resources */,
 				84CA96A8239D22C800A2BF71 /* Main.storyboard in Resources */,
@@ -157,14 +170,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE04EDC223A87C1E001BDE12 /* ImageViewerViewController.swift in Sources */,
 				84CA96A5239D22C800A2BF71 /* ViewController.swift in Sources */,
 				84CA96A1239D22C800A2BF71 /* AppDelegate.swift in Sources */,
 				84CA96BB239FCE5200A2BF71 /* NaverImageTableViewCell.swift in Sources */,
 				84CA96A3239D22C800A2BF71 /* SceneDelegate.swift in Sources */,
 				84CA96BD239FD50700A2BF71 /* SecretKey.swift in Sources */,
+				CE04EDC423A87C4B001BDE12 /* ImageViewerCollectionViewCell.swift in Sources */,
 				84CA96B5239D276D00A2BF71 /* NaverImageAPI.swift in Sources */,
 				84CA96B7239FC81300A2BF71 /* NaverImageResult.swift in Sources */,
 				CE72804923A3381B00B0FDBA /* Array+extension.swift in Sources */,
+				CE0173B023A8B26700AF9085 /* PhotoViewerLayout.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
