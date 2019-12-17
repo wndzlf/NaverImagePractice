@@ -34,17 +34,22 @@ extension ImageViewerViewController: UICollectionViewDelegate, UICollectionViewD
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageViewerCollectionViewCell", for: indexPath) as? ImageViewerCollectionViewCell else {
             return .init()
         }
-        
-        if let cahcedImage = naverImageCache.object(forKey: items[indexPath.item].link as NSString) {
-            cell.imageView.image = cahcedImage
+        if let item = items[safeIndex: indexPath.item] {
+            cell.item = item
         }
-        if let height = items[indexPath.item].estimatedHeight {
-            cell.heightConstraint.constant = height
-        }
-        
+        cell.imageDicDelegate = self
         return cell
     }
+}
+
+extension ImageViewerViewController: imageCachingDelegate {
+   func updateCache(link: String, value: UIImage) {
+        naverImageCache.setObject(value, forKey: link as NSString)
+    }
     
+    func image(link: String) -> UIImage? {
+        return naverImageCache.object(forKey: link as NSString)
+    }
 }
 
 //extension ImageViewerViewController: UICollectionViewDataSourcePrefetching {

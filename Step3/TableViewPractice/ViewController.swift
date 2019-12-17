@@ -185,10 +185,11 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? NaverImageTableViewCell else {
             return .init()
         }
-        cell.imageDicDelegate = self
-        guard let titleLabel = items[safeIndex: indexPath.row]?.title , let imageURLString = items[safeIndex: indexPath.row]?.link else {
+        guard let titleLabel = items[safeIndex: indexPath.row]?.title, let imageURLString = items[safeIndex: indexPath.row]?.link else {
             return .init()
         }
+        
+        cell.imageDicDelegate = self
         cell.titleLabel.text = titleLabel
         cell.imageURLString = imageURLString
         cell.indexPathRow = indexPath.row
