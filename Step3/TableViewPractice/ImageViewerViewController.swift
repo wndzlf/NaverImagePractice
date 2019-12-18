@@ -12,10 +12,12 @@ class ImageViewerViewController: UIViewController {
     
     @IBOutlet weak var collectionView: UICollectionView!
     
-    var items: [Item] = []
+    var prefetechElement = PrefetchElemet()
     var naverImageCache = NSCache<NSString, UIImage>()
     var indexPath: IndexPath?
     var isUserScrollNow: Bool = false
+    
+    var httpTask: URLSessionTask?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,6 +25,7 @@ class ImageViewerViewController: UIViewController {
         collectionView.collectionViewLayout = PhotoViewerLayout()
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.prefetchDataSource = self
         collectionView.backgroundColor = .black
         collectionView.allowsSelection = true
     }
@@ -35,18 +38,28 @@ class ImageViewerViewController: UIViewController {
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        guard let presenting = self.presentingViewController as? ViewController else {
+            return
+        }
+        presenting.prefetchElement = prefetechElement
+        presenting.tableView.reloadData()
+    }
+    
 }
 
 extension ImageViewerViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return items.count
+        return prefetechElement.items.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageViewerCollectionViewCell", for: indexPath) as? ImageViewerCollectionViewCell else {
             return .init()
         }
-        if let item = items[safeIndex: indexPath.item] {
+        if let item = prefetechElement.items[safeIndex: indexPath.item] {
             cell.item = item
         }
         cell.imageDicDelegate = self
@@ -73,9 +86,14 @@ extension ImageViewerViewController: UIScrollViewDelegate {
     }
 }
 
-//extension ImageViewerViewController: UICollectionViewDataSourcePrefetching {
-//    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-//        <#code#>
-//    }
-//
-//}
+extension ImageViewerViewController: UICollectionViewDataSourcePrefetching {
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        guard let last = indexPaths.last?.last else {
+            return
+        }
+        if prefetechElement.items.count - 1 == last {
+            
+        }
+    }
+
+}

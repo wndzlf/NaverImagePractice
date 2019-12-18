@@ -12,6 +12,11 @@ class ImageViewerCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var heightConstraint: NSLayoutConstraint!
+    var indexPathItem = 0 {
+        didSet {
+            print("indexPathItem \(oldValue) \(self.indexPathItem)")
+        }
+    }
     
     var item: Item? {
         didSet {

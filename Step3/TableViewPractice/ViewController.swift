@@ -13,15 +13,42 @@ protocol imageCachingDelegate: AnyObject {
     func image(link: String) -> UIImage?
 }
 
+// CollectionView Dismiss시 동기화
+struct PrefetchElemet {
+    private(set) var paging: Int = 1
+    private(set) var items: [Item] = []
+    private(set) var searchQuery: String = ""
+    private(set) var numberOfImageDisplay: Int = 10
+    
+    mutating func updatePaging(){
+        paging += 1
+    }
+    
+    mutating func updateSearchText(with newValue: String) {
+        searchQuery = newValue
+    }
+    
+    mutating func updateItems(with newItems: [Item]) {
+        items.appendWithoutDuplicate(array: newItems)
+    }
+    
+    mutating func updateItemsEstimatedValue(_ indexPath: IndexPath, estimated: CGFloat) {
+        if indexPath.row < items.count {
+            items[indexPath.row].estimatedHeight = estimated
+        }
+    }
+    
+    mutating func removeAllItems() {
+        items.removeAll()
+    }
+}
+
 class ViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
-    private var items: [Item] = []
+    var prefetchElement = PrefetchElemet()
+    
     private let cellId = "cellId"
-    private var paging = 1
-    private var searchQuery = ""
-    private var storeBeforSearchText = ""
-    private let numberOfImageDisplay = 10
     private var cellHeight: NSMutableDictionary = [:]
     
     private var isRequest = false
@@ -71,8 +98,8 @@ class ViewController: UIViewController {
         setupTableView()
         setupTableViewActivitiyView()
         
-        requestNaverImageResult(query: searchQuery, display: numberOfImageDisplay, start: paging, sort: "1", filter: "1") { [weak self] items in
-            self?.items.append(contentsOf: items)
+        requestNaverImageResult(query: prefetchElement.searchQuery, display: prefetchElement.numberOfImageDisplay, start: prefetchElement.paging, sort: "1", filter: "1") { [weak self] items in
+            self?.prefetchElement.updateItems(with: items)
             self?.tableView.reloadData()
         }
     }
@@ -100,16 +127,18 @@ class ViewController: UIViewController {
     }
     
     @objc private func handleRefreshControl() {
-        items.removeAll()
+        prefetchElement.removeAllItems()
         if let searchBarText = searchBar.text {
-            paging = 1
+            prefetchElement.updatePaging()
             defer {
                 DispatchQueue.main.async {
                     self.tableView.refreshControl?.endRefreshing()
                 }
             }
-            requestNaverImageResult(query: searchBarText, display: numberOfImageDisplay, start: paging, sort: "1", filter: "2") { [weak self] items in
-                self?.items.append(contentsOf: items)
+            requestNaverImageResult(query: searchBarText, display: prefetchElement.numberOfImageDisplay, start: prefetchElement.paging, sort: "1", filter: "2") { [weak self] items in
+                
+                self?.prefetchElement.updateSearchText(with: searchBarText)
+                self?.prefetchElement.updateItems(with: items)
                 self?.tableView.reloadData()
             }
         }
@@ -145,13 +174,14 @@ extension ViewController: UIScrollViewDelegate {
 // MARK: - SearchBarDelegate
 extension ViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        if let searchText = searchBar.text, searchQuery != searchText {
-            items.removeAll()
-            searchQuery = searchText
+        if let searchText = searchBar.text, prefetchElement.searchQuery != searchText {
+            prefetchElement.removeAllItems()
+            prefetchElement.updateSearchText(with: searchText)
             
             self.tableActivityIndicatorView.startAnimating()
-            requestNaverImageResult(query: searchText, display: numberOfImageDisplay, start: paging, sort: "1", filter: "2") { [weak self] items in
-                self?.items.append(contentsOf: items)
+            requestNaverImageResult(query: searchText, display: prefetchElement.numberOfImageDisplay, start: prefetchElement.paging, sort: "1", filter: "2") { [weak self] items in
+                
+                self?.prefetchElement.updateItems(with: items)
                 self?.handleNoData(itemsCount: items.count)
                 self?.tableActivityIndicatorView.stopAnimating()
                 self?.tableView.reloadData()
@@ -178,14 +208,14 @@ extension ViewController: UISearchBarDelegate {
 // MARK: - TableViewDelegate
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count
+        return prefetchElement.items.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? NaverImageTableViewCell else {
             return .init()
         }
-        guard let titleLabel = items[safeIndex: indexPath.row]?.title, let imageURLString = items[safeIndex: indexPath.row]?.link else {
+        guard let titleLabel = prefetchElement.items[safeIndex: indexPath.row]?.title, let imageURLString = prefetchElement.items[safeIndex: indexPath.row]?.link else {
             return .init()
         }
         
@@ -206,7 +236,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     private func ratio(with indexPathRow: Int) -> CGFloat {
-        guard let width = items[safeIndex: indexPathRow]?.sizewidth, let height = items[safeIndex: indexPathRow]?.sizeheight else {
+        guard let width = prefetchElement.items[safeIndex: indexPathRow]?.sizewidth, let height = prefetchElement.items[safeIndex: indexPathRow]?.sizeheight else {
             return 0
         }
         
@@ -226,16 +256,14 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row < items.count {
-            items[indexPath.row].estimatedHeight = cell.frame.size.height
-        }
+        prefetchElement.updateItemsEstimatedValue(indexPath, estimated: cell.frame.size.height)
     }
 
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard indexPath.row < items.count else {
+        guard indexPath.row < prefetchElement.items.count else {
             return UITableView.automaticDimension
         }
-        if let height = items[indexPath.row].estimatedHeight {
+        if let height = prefetchElement.items[indexPath.row].estimatedHeight {
             return height
         }
         return UITableView.automaticDimension
@@ -246,7 +274,8 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         guard let viewController = storyboard.instantiateViewController(identifier: "ImageViewerViewController") as? ImageViewerViewController else {
             return
         }
-        viewController.items = items
+        //viewController.items = prefetchElement.items
+        viewController.prefetechElement = prefetchElement
         viewController.naverImageCache = naverImageCache
         viewController.indexPath = indexPath
         //viewController.modalPresentationStyle = .fullScreen
@@ -260,15 +289,16 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 extension ViewController: UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         
-        if let row = indexPaths.last?.row, row >= items.count - 4 {
-            paging += 1
+        if let row = indexPaths.last?.row, row >= prefetchElement.items.count - 4 {
+            prefetchElement.updatePaging()
             
             tableView.tableFooterView = footerActivityIndicator
             tableView.sectionFooterHeight = footerHeight
             
             isRequest = true
-            self.requestNaverImageResult(query: searchQuery, display: numberOfImageDisplay, start: paging, sort: "1", filter: "1") { [weak self] items in
-                self?.items.appendWithoutDuplicate(array: items)
+            self.requestNaverImageResult(query: prefetchElement.searchQuery, display: prefetchElement.numberOfImageDisplay, start: prefetchElement.paging, sort: "1", filter: "1") { [weak self] items in
+                
+                self?.prefetchElement.updateItems(with: items)
                 self?.tableView.reloadData()
                 
                 self?.tableView.tableFooterView = nil
@@ -281,7 +311,7 @@ extension ViewController: UITableViewDataSourcePrefetching {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId) as? NaverImageTableViewCell else {
             return
         }
-        cell.httpTask?.cancel()
+        //cell.httpTask?.cancel()
     }
 }
 
