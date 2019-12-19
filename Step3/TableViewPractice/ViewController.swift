@@ -48,15 +48,17 @@ class ViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     var prefetchElement = PrefetchElemet()
-    
-    private let cellId = "cellId"
-    private var cellHeight: NSMutableDictionary = [:]
+    var currentIndexPath: IndexPath = IndexPath(row: 0, section: 0)
     
     private var isRequest = false
     
     private var naverImageCache = NSCache<NSString, UIImage>()
     
-    var currentIndexPath: IndexPath = IndexPath(row: 0, section: 0)
+    private let cellId = "cellId"
+    private var cellHeight: NSMutableDictionary = [:]
+
+    private let footerHeight: CGFloat = 70
+    private let footerHeightWhenDataFinished: CGFloat = 0
     
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
@@ -73,10 +75,7 @@ class ViewController: UIViewController {
         noDataLabel.translatesAutoresizingMaskIntoConstraints = false
         return noDataLabel
     }()
-    
-    private let footerHeight: CGFloat = 70
-    private let footerHeightWhenDataFinished: CGFloat = 0
-    
+
     private lazy var footerActivityIndicator: UIActivityIndicatorView = {
         let acitivityView = UIActivityIndicatorView(style: .medium)
         acitivityView.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: footerHeight)
@@ -121,6 +120,8 @@ class ViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.prefetchDataSource = self
+        tableView.dragDelegate = self
+        tableView.dragInteractionEnabled = true
         
         let naverImageTableViewCellNIB = UINib(nibName: "NaverImageTableViewCell", bundle: nil)
         tableView.register(naverImageTableViewCellNIB, forCellReuseIdentifier: cellId)
@@ -301,6 +302,7 @@ extension ViewController: UITableViewDataSourcePrefetching {
             isRequest = true
             self.requestNaverImageResult(query: prefetchElement.searchQuery, display: prefetchElement.numberOfImageDisplay, start: prefetchElement.paging, sort: "1", filter: "1") { [weak self] items in
                 
+                print("prefetching Paing \(self?.prefetchElement.paging)")
                 self?.prefetchElement.updateItems(with: items)
                 self?.tableView.reloadData()
                 
@@ -335,4 +337,23 @@ extension ViewController: NSCacheDelegate {
     }
 }
 
+// MARK: - TableView DragDelegate
 
+extension ViewController: UITableViewDragDelegate {
+    func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        
+        guard let item = prefetchElement.items[safeIndex: indexPath.row] else {
+            return []
+        }
+        
+        let provider = NSItemProvider(item: item, typeIdentifier: "items\(indexPath.row)")
+        let drageItem
+        
+        return []
+    }
+    
+    func tableView(_ tableView: UITableView, dragSessionWillBegin session: UIDragSession) {
+        print("UITableViewDragDelegate \(session.localContext)")
+    }
+
+}

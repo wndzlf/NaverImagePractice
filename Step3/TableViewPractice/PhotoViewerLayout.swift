@@ -12,6 +12,7 @@ class PhotoViewerLayout: UICollectionViewLayout {
 
     var contentBounds = CGRect.zero
     var cachedAttryibutes = [UICollectionViewLayoutAttributes]()
+    var attribute: UICollectionViewLayoutAttributes?
     
     override func prepare() {
         super.prepare()
@@ -36,6 +37,9 @@ class PhotoViewerLayout: UICollectionViewLayout {
             currentIndex += 1
             currentX = collectionView.frame.width * CGFloat(currentIndex)
         }
+        
+        attribute =  UICollectionViewLayoutAttributes(forSupplementaryViewOfKind: "forSupplementaryViewOfKind", with: IndexPath(item: 0, section: 0))
+        attribute?.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
     }
     
     override var collectionViewContentSize: CGSize {
@@ -57,5 +61,9 @@ class PhotoViewerLayout: UICollectionViewLayout {
     
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         return cachedAttryibutes
+    }
+    
+    override func layoutAttributesForSupplementaryView(ofKind elementKind: String, at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        return attribute
     }
 }

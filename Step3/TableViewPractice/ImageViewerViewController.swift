@@ -23,11 +23,13 @@ class ImageViewerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        collectionView.register(UICollectionReusableView.self, forSupplementaryViewOfKind: "forSupplementaryViewOfKind", withReuseIdentifier: "withReuseIdentifier")
         collectionView.collectionViewLayout = PhotoViewerLayout()
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.prefetchDataSource = self
         collectionView.backgroundColor = .black
+        
         collectionView.allowsSelection = true
     }
     
@@ -75,15 +77,22 @@ extension ImageViewerViewController: UICollectionViewDelegate, UICollectionViewD
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageViewerCollectionViewCell", for: indexPath) as? ImageViewerCollectionViewCell else {
             return .init()
         }
+        cell.imageDicDelegate = self
         if let item = prefetechElement.items[safeIndex: indexPath.item] {
             cell.item = item
         }
-        cell.imageDicDelegate = self
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         currentIndexPath = indexPath
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        
+        let cell = collectionView.dequeueReusableSupplementaryView(ofKind: "forSupplementaryViewOfKind", withReuseIdentifier: "withReuseIdentifier", for: indexPath)
+        cell.backgroundColor = .red
+        return cell
     }
 }
 
@@ -111,18 +120,17 @@ extension ImageViewerViewController: UICollectionViewDataSourcePrefetching {
         guard let last = indexPaths.last?.last else {
             return
         }
-        if prefetechElement.items.count - 1 >= last {
-            
+        
+        if prefetechElement.items.count - 1 == last {
             prefetechElement.updatePaging()
             requestNaverImageResult(query: prefetechElement.searchQuery, display: prefetechElement.numberOfImageDisplay, start: prefetechElement.paging, sort: "1", filter: "1") { [weak self] items in
                 guard let self = self else {
                     return
                 }
-                
                 self.prefetechElement.updateItems(with: items)
                 self.collectionView.reloadData()
             }
         }
     }
-
+    
 }
