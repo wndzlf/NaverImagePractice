@@ -10,8 +10,10 @@ import UIKit
 
 // MARK: - NaverImagResult
 struct NaverImagResult: Codable {
-    let lastBuildDate: String
-    let total, start, display: Int
+    let lastBuildDate: String?
+    let total: Int?
+    let start: Int?
+    let display: Int?
     let items: [Item]
 }
 

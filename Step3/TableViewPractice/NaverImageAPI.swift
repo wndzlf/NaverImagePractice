@@ -19,7 +19,6 @@ class NaverImageAPI {
         NaverImageAPI.dataTask?.cancel()
         
         let urlString = NaverImageAPI.baseURL //+ "?" + "query=" + "\(query)"
-        print(urlString)
         
         guard var url = URLComponents(string: urlString) else {
             return
@@ -44,7 +43,6 @@ class NaverImageAPI {
             let decoder = JSONDecoder()
             do {
                 let parsed = try decoder.decode(NaverImagResult.self, from: data)
-                
                 DispatchQueue.main.async {
                     completionHandler(.success(parsed))
                 }

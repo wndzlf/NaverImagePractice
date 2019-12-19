@@ -12,11 +12,7 @@ class ImageViewerCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var heightConstraint: NSLayoutConstraint!
-    var indexPathItem = 0 {
-        didSet {
-            print("indexPathItem \(oldValue) \(self.indexPathItem)")
-        }
-    }
+    var indexPathItem = 0
     
     var item: Item? {
         didSet {
@@ -41,7 +37,6 @@ class ImageViewerCollectionViewCell: UICollectionViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
         
     }
     

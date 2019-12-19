@@ -45,7 +45,6 @@ class NaverImageAPI {
                 let parsed = try decoder.decode(NaverImagResult.self, from: data)
                 DispatchQueue.main.async {
                     completionHandler(.success(parsed))
-                    print("검색된 결과의 개수 \(parsed.display)")
                 }
             } catch {
                 completionHandler(.failure(.JsonParksingError))

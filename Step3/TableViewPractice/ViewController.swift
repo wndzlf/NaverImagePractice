@@ -21,6 +21,7 @@ struct PrefetchElemet {
     private(set) var numberOfImageDisplay: Int = 10
     
     mutating func updatePaging(){
+        guard paging <= 98 else { return }
         paging += 1
     }
     
@@ -54,6 +55,8 @@ class ViewController: UIViewController {
     private var isRequest = false
     
     private var naverImageCache = NSCache<NSString, UIImage>()
+    
+    var currentIndexPath: IndexPath = IndexPath(row: 0, section: 0)
     
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
@@ -98,10 +101,11 @@ class ViewController: UIViewController {
         setupTableView()
         setupTableViewActivitiyView()
         
-        requestNaverImageResult(query: prefetchElement.searchQuery, display: prefetchElement.numberOfImageDisplay, start: prefetchElement.paging, sort: "1", filter: "1") { [weak self] items in
-            self?.prefetchElement.updateItems(with: items)
-            self?.tableView.reloadData()
-        }
+//        requestNaverImageResult(query: prefetchElement.searchQuery, display: prefetchElement.numberOfImageDisplay, start: prefetchElement.paging, sort: "1", filter: "1") { [weak self] items in
+//            
+//            self?.prefetchElement.updateItems(with: items)
+//            self?.tableView.reloadData()
+//        }
     }
     
     private func setupTableViewActivitiyView() {
@@ -288,7 +292,6 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 // MARK: - TableViewDataSourcePrefetching
 extension ViewController: UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        
         if let row = indexPaths.last?.row, row >= prefetchElement.items.count - 4 {
             prefetchElement.updatePaging()
             
