@@ -9,7 +9,7 @@
 import UIKit
 
 // Step 6 시작
-// Step 6 시작
+// Step 6 시작2
 class ImageViewerViewController: UIViewController {
     
     @IBOutlet weak var collectionView: UICollectionView!
