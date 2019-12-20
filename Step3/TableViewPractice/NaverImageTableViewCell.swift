@@ -12,14 +12,17 @@ class NaverImageTableViewCell: UITableViewCell {
     
     @IBOutlet weak var naverImage: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var linkButton: UIButton?
     
     var httpTask: URLSessionDataTask?
+    var httpDownloadTask: URLSessionDownloadTask?
+    
+    
     var indexPathRow: Int = 0 {
         didSet {
-            
+    
         }
     }
-    
     weak var imageDicDelegate: imageCachingDelegate?
     
     var imageURLString: String? {
@@ -27,6 +30,10 @@ class NaverImageTableViewCell: UITableViewCell {
             guard let imageURLString = imageURLString else {
                 return
             }
+            guard let linkButton = linkButton else {
+                return
+            }
+            linkButton.setTitle(imageURLString, for: .normal)
             if let naverImage = self.imageDicDelegate?.image(link: imageURLString) {
                 self.naverImage.image = naverImage
                 return
@@ -48,8 +55,8 @@ class NaverImageTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
-        //self.naverImage.image = nil
+        
+        isEditing = true
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -65,6 +72,9 @@ class NaverImageTableViewCell: UITableViewCell {
         titleLabel.text = nil
     
         httpTask?.cancel()
+        httpDownloadTask?.cancel { data in
+            
+        }
     }
     
     private func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {

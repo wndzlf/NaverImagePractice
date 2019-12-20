@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MobileCoreServices
 
 protocol imageCachingDelegate: AnyObject {
     func updateCache(link: String, value: UIImage)
@@ -42,6 +43,47 @@ struct PrefetchElemet {
     mutating func removeAllItems() {
         items.removeAll()
     }
+    
+    mutating func deleteItem(at indexPath: IndexPath) {
+        items.remove(at: indexPath.row)
+    }
+    
+    func dragItems(for indexPath: IndexPath) -> [UIDragItem] {
+        guard let item = items[safeIndex: indexPath.item] else {
+            return []
+        }
+        
+        let data = archive(w: item)
+        let itemProvider = NSItemProvider()
+        
+        itemProvider.registerDataRepresentation(forTypeIdentifier: kUTTagClassMIMEType as String, visibility: .all) { completion in
+            completion(data,nil)
+            return nil
+        }
+        
+        return [
+            UIDragItem(itemProvider: itemProvider)
+        ]
+    }
+    
+    func archive<T>(w: T) -> Data {
+        var fw = w
+        print("arcive \(MemoryLayout<T>.stride)")
+        return Data(bytes: &fw, count: MemoryLayout<T>.stride)
+    }
+    
+    func canHandle(_ session: UIDropSession) -> Bool {
+        return session.canLoadObjects(ofClass: NSString.self)
+    }
+    
+    mutating func moveItem(at sourceIndexPathRow: Int, to destinationIndexPathRow: Int) {
+        guard sourceIndexPathRow != destinationIndexPathRow else { return }
+        
+        if let item = items[safeIndex: sourceIndexPathRow] {
+            items.remove(at: sourceIndexPathRow)
+            items.insert(item, at: destinationIndexPathRow)
+        }
+    }
 }
 
 class ViewController: UIViewController {
@@ -60,7 +102,7 @@ class ViewController: UIViewController {
     private let footerHeight: CGFloat = 70
     private let footerHeightWhenDataFinished: CGFloat = 0
     
-    private lazy var searchBar: UISearchBar = {
+    private lazy var searchBar: UISearchBar = { () -> UISearchBar in
         let searchBar = UISearchBar()
         searchBar.barStyle = .default
         searchBar.delegate = self
@@ -121,7 +163,13 @@ class ViewController: UIViewController {
         tableView.dataSource = self
         tableView.prefetchDataSource = self
         tableView.dragDelegate = self
+        tableView.dropDelegate = self
+        
         tableView.dragInteractionEnabled = true
+        
+        tableView.separatorColor = .blue
+        //tableView.isEditing = true
+        tableView.isMultipleTouchEnabled = false
         
         let naverImageTableViewCellNIB = UINib(nibName: "NaverImageTableViewCell", bundle: nil)
         tableView.register(naverImageTableViewCellNIB, forCellReuseIdentifier: cellId)
@@ -210,8 +258,8 @@ extension ViewController: UISearchBarDelegate {
     }
 }
 
-// MARK: - TableViewDelegate
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
+    // MARK: - TableViewDelegate, TableViewDataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return prefetchElement.items.count
     }
@@ -233,10 +281,10 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let ratio = self.ratio(with: indexPath.row)
-        
+
         let currentWidth = self.tableView.frame.width - 8
         let resultHeight = currentWidth * ratio
-        
+
         return resultHeight + 34
     }
     
@@ -287,11 +335,26 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         
         self.present(viewController, animated: true, completion: nil)
     }
-
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            prefetchElement.deleteItem(at: indexPath)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        
+        prefetchElement.moveItem(at: sourceIndexPath.row, to: destinationIndexPath.row)
+    }
 }
 
-// MARK: - TableViewDataSourcePrefetching
 extension ViewController: UITableViewDataSourcePrefetching {
+    // MARK: - TableViewDataSourcePrefetching
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         if let row = indexPaths.last?.row, row >= prefetchElement.items.count - 4 {
             prefetchElement.updatePaging()
@@ -313,6 +376,7 @@ extension ViewController: UITableViewDataSourcePrefetching {
     }
     
     func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
+        // 여기서 특정 indexPath에 맞는 셀만
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId) as? NaverImageTableViewCell else {
             return
         }
@@ -337,23 +401,62 @@ extension ViewController: NSCacheDelegate {
     }
 }
 
-// MARK: - TableView DragDelegate
-
-extension ViewController: UITableViewDragDelegate {
-    func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-        
-        guard let item = prefetchElement.items[safeIndex: indexPath.row] else {
-            return []
+extension ViewController: UITableViewDragDelegate, UITableViewDropDelegate {
+    func tableView(_ tableView: UITableView, performDropWith coordinator: UITableViewDropCoordinator) {
+        print("itemProvider 진입")
+        if let destinationIndexPath = coordinator.destinationIndexPath {
+            
+            coordinator.session.loadObjects(ofClass: NSString.self) { itemProvider in
+                guard let item = itemProvider as? [Item] else {
+                    print("itemProvider 실패")
+                    return
+                }
+                print("itemProvider 성공")
+            }
         }
-        
-        let provider = NSItemProvider(item: item, typeIdentifier: "items\(indexPath.row)")
-        let drageItem
-        
-        return []
     }
     
-    func tableView(_ tableView: UITableView, dragSessionWillBegin session: UIDragSession) {
-        print("UITableViewDragDelegate \(session.localContext)")
+    // MARK: - TableView DragDelegate
+    func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        print("itemProvider drag시작")
+        tableView.allowsSelection = false
+        return prefetchElement.dragItems(for: indexPath)
     }
-
+    
+    func tableView(_ tableView: UITableView, dropSessionDidEnter session: UIDropSession) {
+        print("dropSessionDidEnter")
+    }
+    
+    func tableView(_ tableView: UITableView, dropSessionDidExit session: UIDropSession) {
+        print("dropSessionDidExit")
+    }
+    
+    func tableView(_ tableView: UITableView, dropSessionDidEnd session: UIDropSession) {
+        tableView.allowsSelection = true
+        print("dropSessionDidEnd")
+    }
+    
+    func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
+        
+        
+        if tableView.hasActiveDrag {
+            print("dropsessiondidupdate")
+            if session.items.count > 1 {
+                print("dropsessiondidupdate cancel")
+                return UITableViewDropProposal(operation: .cancel)
+            } else {
+                print("dropsessiondidupdate move")
+                return UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+            }
+        } else {
+            print("dropsessiondidupdate copy")
+            return UITableViewDropProposal(operation: .copy, intent: .insertAtDestinationIndexPath)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, canHandle session: UIDropSession) -> Bool {
+        return true
+    }
+    
 }
+
