@@ -31,6 +31,11 @@ class ImageViewerViewController: UIViewController {
         collectionView.backgroundColor = .black
         
         collectionView.allowsSelection = true
+        collectionView.pinchGestureRecognizer?.addTarget(self, action: #selector(handlePinch))
+    }
+    
+    @objc private func handlePinch() {
+        print("handlePinch")
     }
     
     override func viewDidLayoutSubviews() {
@@ -83,17 +88,7 @@ extension ImageViewerViewController: UICollectionViewDelegate, UICollectionViewD
         }
         return cell
     }
-    
-    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        currentIndexPath = indexPath
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        
-        let cell = collectionView.dequeueReusableSupplementaryView(ofKind: "forSupplementaryViewOfKind", withReuseIdentifier: "withReuseIdentifier", for: indexPath)
-        cell.backgroundColor = .red
-        return cell
-    }
+
 }
 
 extension ImageViewerViewController: imageCachingDelegate {

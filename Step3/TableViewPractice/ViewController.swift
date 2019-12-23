@@ -141,12 +141,6 @@ class ViewController: UIViewController {
         
         setupTableView()
         setupTableViewActivitiyView()
-        
-//        requestNaverImageResult(query: prefetchElement.searchQuery, display: prefetchElement.numberOfImageDisplay, start: prefetchElement.paging, sort: "1", filter: "1") { [weak self] items in
-//            
-//            self?.prefetchElement.updateItems(with: items)
-//            self?.tableView.reloadData()
-//        }
     }
     
     private func setupTableViewActivitiyView() {
@@ -222,6 +216,7 @@ extension ViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         searchBar.resignFirstResponder()
     }
+ 
 }
 
 // MARK: - SearchBarDelegate
@@ -350,6 +345,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         
         prefetchElement.moveItem(at: sourceIndexPath.row, to: destinationIndexPath.row)
+        tableView.reloadData()
     }
 }
 
@@ -459,4 +455,3 @@ extension ViewController: UITableViewDragDelegate, UITableViewDropDelegate {
     }
     
 }
-

@@ -80,6 +80,7 @@
 				84CA96A2239D22C800A2BF71 /* SceneDelegate.swift */,
 				CE72804823A3381B00B0FDBA /* Array+extension.swift */,
 				84CA96A4239D22C800A2BF71 /* ViewController.swift */,
+				CE04EDC123A87C1E001BDE12 /* ImageViewerViewController.swift */,
 				84CA96A6239D22C800A2BF71 /* Main.storyboard */,
 				84CA96B8239FCE3B00A2BF71 /* NaverImageTableViewCell.xib */,
 				84CA96BA239FCE5200A2BF71 /* NaverImageTableViewCell.swift */,
@@ -91,7 +92,6 @@
 				84CA96BC239FD50700A2BF71 /* SecretKey.swift */,
 				CE04EDBF23A87B4C001BDE12 /* ImageViewer.storyboard */,
 				CE04EDC323A87C4B001BDE12 /* ImageViewerCollectionViewCell.swift */,
-				CE04EDC123A87C1E001BDE12 /* ImageViewerViewController.swift */,
 				CE0173AF23A8B26700AF9085 /* PhotoViewerLayout.swift */,
 			);
 			path = TableViewPractice;
