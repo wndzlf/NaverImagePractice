@@ -12,11 +12,7 @@ class ImageViewerCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var heightConstraint: NSLayoutConstraint!
-    var indexPathItem = 0 {
-        didSet {
-            print("indexPathItem \(oldValue) \(self.indexPathItem)")
-        }
-    }
+    var indexPathItem = 0
     
     var item: Item? {
         didSet {
@@ -32,7 +28,12 @@ class ImageViewerCollectionViewCell: UICollectionViewCell {
                 }
             }
             if let height = item?.estimatedHeight {
-                heightConstraint.constant = height
+                guard height <= self.frame.height * 0.8 else {
+                    self.heightConstraint.constant = self.frame.height * 0.8
+                    return
+                }
+                self.heightConstraint.constant = height
+                self.layoutIfNeeded()
             }
         }
     }
@@ -41,7 +42,6 @@ class ImageViewerCollectionViewCell: UICollectionViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
         
     }
     
@@ -56,6 +56,7 @@ class ImageViewerCollectionViewCell: UICollectionViewCell {
         guard let url = URL(string: url) else {
             return
         }
+        httpTask?.cancel()
         httpTask = URLSession.shared.dataTask(with: url) { data, response, error in
             guard let data = data, let image = UIImage(data: data) else {
                 return

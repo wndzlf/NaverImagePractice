@@ -16,18 +16,26 @@ class ImageViewerViewController: UIViewController {
     var naverImageCache = NSCache<NSString, UIImage>()
     var indexPath: IndexPath?
     var isUserScrollNow: Bool = false
-    
     var httpTask: URLSessionTask?
+    
+    private var currentIndexPath: IndexPath = IndexPath(item: 0, section: 0)
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        collectionView.register(UICollectionReusableView.self, forSupplementaryViewOfKind: "forSupplementaryViewOfKind", withReuseIdentifier: "withReuseIdentifier")
         collectionView.collectionViewLayout = PhotoViewerLayout()
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.prefetchDataSource = self
         collectionView.backgroundColor = .black
+        
         collectionView.allowsSelection = true
+        collectionView.pinchGestureRecognizer?.addTarget(self, action: #selector(handlePinch))
+    }
+    
+    @objc private func handlePinch() {
+        print("handlePinch")
     }
     
     override func viewDidLayoutSubviews() {
@@ -44,8 +52,23 @@ class ImageViewerViewController: UIViewController {
         guard let presenting = self.presentingViewController as? ViewController else {
             return
         }
+        
+        presenting.currentIndexPath = currentIndexPath
         presenting.prefetchElement = prefetechElement
         presenting.tableView.reloadData()
+        presenting.tableView.scrollToRow(at: IndexPath(row: currentIndexPath.item, section: 0), at: .middle, animated: false)
+    }
+    
+    private func requestNaverImageResult(query: String, display: Int, start: Int, sort: String, filter: String, completion: @escaping ([Item]) -> Void) {
+        NaverImageAPI.request(query: query, display: display, start: start, sort: sort, filter: filter) { [weak self] result in
+            switch result {
+            case .success(let naverImageResult):
+                completion(naverImageResult.items)
+            case .failure(.JsonParksingError):
+                print("JsonParsingError in CollectionViewController")
+                break
+            }
+        }
     }
     
 }
@@ -59,12 +82,13 @@ extension ImageViewerViewController: UICollectionViewDelegate, UICollectionViewD
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageViewerCollectionViewCell", for: indexPath) as? ImageViewerCollectionViewCell else {
             return .init()
         }
+        cell.imageDicDelegate = self
         if let item = prefetechElement.items[safeIndex: indexPath.item] {
             cell.item = item
         }
-        cell.imageDicDelegate = self
         return cell
     }
+
 }
 
 extension ImageViewerViewController: imageCachingDelegate {
@@ -91,9 +115,17 @@ extension ImageViewerViewController: UICollectionViewDataSourcePrefetching {
         guard let last = indexPaths.last?.last else {
             return
         }
+        
         if prefetechElement.items.count - 1 == last {
-            
+            prefetechElement.updatePaging()
+            requestNaverImageResult(query: prefetechElement.searchQuery, display: prefetechElement.numberOfImageDisplay, start: prefetechElement.paging, sort: "1", filter: "1") { [weak self] items in
+                guard let self = self else {
+                    return
+                }
+                self.prefetechElement.updateItems(with: items)
+                self.collectionView.reloadData()
+            }
         }
     }
-
+    
 }
