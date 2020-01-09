@@ -82,10 +82,14 @@ extension ImageViewerViewController: UICollectionViewDelegate, UICollectionViewD
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageViewerCollectionViewCell", for: indexPath) as? ImageViewerCollectionViewCell else {
             return .init()
         }
-        cell.imageDicDelegate = self
-        if let item = prefetechElement.items[safeIndex: indexPath.item] {
-            cell.item = item
+        
+        var item: Item?
+        if let prefetchItem = prefetechElement.items[safeIndex: indexPath.item] {
+            item = prefetchItem
+            //cell.item = item
         }
+        
+        cell.configure(self, item)
         return cell
     }
 

@@ -12,59 +12,38 @@ class ImageViewerCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var heightConstraint: NSLayoutConstraint!
-    var indexPathItem = 0
     
-    var item: Item? {
-        didSet {
-            guard let link = item?.link else {
+    var cellModel: NaverImageCellModel?
+    var item: Item?
+    
+    func configure(_ imageCachingDelegate: imageCachingDelegate, _ item: Item?) {
+        guard let item = item else {
+            return
+        }
+        cellModel = NaverImageCellModel(item.link)
+        cellModel?.imageDicDelegate = imageCachingDelegate
+        
+        cellModel?.downloadImage { [weak self] image in
+            self?.imageView.image = image
+        }
+        if let height = item.estimatedHeight {
+            guard height <= self.frame.height * 0.8 else {
+                self.heightConstraint.constant = self.frame.height * 0.8
                 return
             }
-            if let cachedImage = imageDicDelegate?.image(link: link) {
-                imageView.image = cachedImage
-            } else {
-                downloadImage(url: link) { [weak self] image in
-                    self?.imageView.image = image
-                    self?.imageDicDelegate?.updateCache(link: link , value: image)
-                }
-            }
-            if let height = item?.estimatedHeight {
-                guard height <= self.frame.height * 0.8 else {
-                    self.heightConstraint.constant = self.frame.height * 0.8
-                    return
-                }
-                self.heightConstraint.constant = height
-                self.layoutIfNeeded()
-            }
+            self.heightConstraint.constant = height
+            self.layoutIfNeeded()
         }
     }
-    weak var imageDicDelegate: imageCachingDelegate?
-    private var httpTask: URLSessionTask?
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
         
         imageView.image = nil
-        httpTask?.cancel()
-    }
-    
-    private func downloadImage(url: String, completionHandler: @escaping (UIImage) -> Void) {
-        guard let url = URL(string: url) else {
-            return
-        }
-        httpTask?.cancel()
-        httpTask = URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, let image = UIImage(data: data) else {
-                return
-            }
-            DispatchQueue.main.async {
-                 completionHandler(image)
-            }
-        }
-        httpTask?.resume()
+        cellModel?.prepareForReuse()
     }
 }
