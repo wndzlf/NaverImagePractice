@@ -38,7 +38,11 @@ class NaverImageAPI {
         request.httpMethod = "GET"
         
         dataTask = NaverImageAPI.defaultSession.dataTask(with: request) { (data, response, error) in
-            guard let data = data else {return}
+            guard let data = data else { return }
+            
+            if let stringOfdata = String(data: data, encoding: .utf8) {
+                print("String Of Data \(stringOfdata)")
+            }
             
             let decoder = JSONDecoder()
             do {

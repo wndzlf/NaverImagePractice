@@ -60,7 +60,7 @@ class ImageViewerViewController: UIViewController {
     }
     
     private func requestNaverImageResult(query: String, display: Int, start: Int, sort: String, filter: String, completion: @escaping ([Item]) -> Void) {
-        NaverImageAPI.request(query: query, display: display, start: start, sort: sort, filter: filter) { [weak self] result in
+        NaverImageAPI.request(query: query, display: display, start: start, sort: sort, filter: filter) { result in
             switch result {
             case .success(let naverImageResult):
                 completion(naverImageResult.items)

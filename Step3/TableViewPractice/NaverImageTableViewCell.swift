@@ -8,49 +8,81 @@
 
 import UIKit
 
+protocol NaverImageDownloadable: class {
+    var urlString: String { get }
+    var httpTask: URLSessionDataTask? { set get }
+    func downloadImage(completionHandler: @escaping (Data?, URLResponse?, Error?) -> ())
+}
+
+extension NaverImageDownloadable {
+    func downloadImage(completionHandler: @escaping (Data?, URLResponse?, Error?) -> ()) {
+        guard let url = URL(string: urlString) else {return}
+        
+        httpTask = URLSession.shared.dataTask(with: url, completionHandler: completionHandler)
+        httpTask?.resume()
+    }
+}
+
+class NaverImageCellModel: NaverImageDownloadable {
+    var httpTask: URLSessionDataTask?
+    var urlString: String
+    weak var imageDicDelegate: imageCachingDelegate?
+    
+    init(_ urlString: String) {
+        self.urlString = urlString
+    }
+    
+    func downloadImage(completionHandler: @escaping (UIImage) -> ()) {
+        if let naverImage = self.imageDicDelegate?.image(link: urlString) {
+            completionHandler(naverImage)
+            return
+        }
+        downloadImage() { data, response, error in
+            guard let data = data, let image = UIImage(data: data) else {
+                return
+            }
+            self.imageDicDelegate?.updateCache(link: self.urlString, value: image)
+            DispatchQueue.main.async {
+                completionHandler(image)
+            }
+        }
+    }
+    
+    func prepareForReuse() {
+        httpTask?.cancel()
+    }
+}
+
 class NaverImageTableViewCell: UITableViewCell {
     
     @IBOutlet weak var naverImage: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var linkButton: UIButton?
     
-    var httpTask: URLSessionDataTask?
-    var httpDownloadTask: URLSessionDownloadTask?
-    
-    
     var indexPathRow: Int = 0 {
         didSet {
     
         }
     }
-    weak var imageDicDelegate: imageCachingDelegate?
+    
+    var cellModel: NaverImageCellModel?
     
     var imageURLString: String? {
         didSet {
-            guard let imageURLString = imageURLString else {
-                return
-            }
-            guard let linkButton = linkButton else {
+            guard let imageURLString = imageURLString, let linkButton = linkButton else {
                 return
             }
             linkButton.setTitle(imageURLString, for: .normal)
-            if let naverImage = self.imageDicDelegate?.image(link: imageURLString) {
-                self.naverImage.image = naverImage
-                return
-            }
-            downloadImage(from: imageURLString) { [weak self] data, response, error in
-                guard let self = self else {
-                    return
-                }
-                guard let data = data, let image = UIImage(data: data) else {
-                    return
-                }
-                DispatchQueue.main.async {
-                    self.naverImage.image = image
-                    self.imageDicDelegate?.updateCache(link: imageURLString, value: image)
-                }
+            
+            cellModel = NaverImageCellModel(imageURLString)
+            cellModel?.downloadImage() { [weak self] image in
+                self?.naverImage.image = image
             }
         }
+    }
+    
+    private func configure() {
+        
     }
     
     override func awakeFromNib() {
@@ -62,28 +94,13 @@ class NaverImageTableViewCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
-        // Configure the view for the selected state
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
         
+        cellModel?.prepareForReuse()
         naverImage.image = nil
         titleLabel.text = nil
-    
-        httpTask?.cancel()
-        httpDownloadTask?.cancel { data in
-            
-        }
-    }
-    
-    private func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
-        httpTask = URLSession.shared.dataTask(with: url, completionHandler: completion)
-        httpTask?.resume()
-    }
-    
-    func downloadImage(from urlString: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> () ) {
-        guard let url = URL(string: urlString) else {return}
-        getData(from: url, completion: completionHandler)
     }
 }

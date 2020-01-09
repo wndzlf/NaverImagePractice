@@ -15,6 +15,15 @@ struct NaverImagResult: Codable {
     let start: Int?
     let display: Int?
     let items: [Item]
+    
+    enum CodingKeys: String, CodingKey {
+        case lastBuildDate
+        case total
+        case start
+        case display
+        case items
+    }
+    
 }
 
 // MARK: - Item

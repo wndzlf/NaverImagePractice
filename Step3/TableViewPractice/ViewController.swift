@@ -267,7 +267,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             return .init()
         }
         
-        cell.imageDicDelegate = self
+        cell.cellModel?.imageDicDelegate = self
         cell.titleLabel.text = titleLabel
         cell.imageURLString = imageURLString
         cell.indexPathRow = indexPath.row
