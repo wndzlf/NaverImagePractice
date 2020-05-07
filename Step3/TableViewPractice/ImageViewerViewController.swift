@@ -32,6 +32,15 @@ class ImageViewerViewController: UIViewController {
         
         collectionView.allowsSelection = true
         collectionView.pinchGestureRecognizer?.addTarget(self, action: #selector(handlePinch))
+        
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+//            //self.collectionView.reloadData()
+//            
+//            //invalidateLayout이 dataSource 함수나 delegate 함수를 호출하지는 않는다.
+//            //그러면 언제 invalideLayout으로 crash가 나는가?
+//            //
+//            self.collectionView.collectionViewLayout.invalidateLayout()
+//        }
     }
     
     @objc private func handlePinch() {
@@ -69,6 +78,14 @@ class ImageViewerViewController: UIViewController {
                 break
             }
         }
+    }
+    
+    override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.willTransition(to: newCollection, with: coordinator)
+        
+        //collectionView.reloadData()
+        // invalildateLayout() 함수가 dataSource 함수를 호출한다. 모든 데이터가 제대로 들어가있지 않는 상황이라면 crash 발생여지가 있다.
+        //collectionView.collectionViewLayout.invalidateLayout()
     }
     
 }

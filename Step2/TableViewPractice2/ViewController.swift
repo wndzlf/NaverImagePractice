@@ -65,6 +65,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? NaverImageTableViewCell else {
             return .init()
         }
+        
         cell.imageDicDelegate = self
         cell.titleLabel.text = items[indexPath.row].title
         cell.imageURLString = items[indexPath.row].link
